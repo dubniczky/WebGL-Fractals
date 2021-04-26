@@ -1,4 +1,5 @@
 uniform vec3 emptyColor; 
+uniform sampler2D palette;
 
 uniform vec2 size;
 uniform vec2 offset;
@@ -18,7 +19,7 @@ void main()
     float x = 0.0;
     float y = 0.0;
     int i = 0;
-    int limit = 4000;
+    int limit = 100;
 
     while (x*x + y*y <= 4.0 && i < limit)
     {
@@ -27,8 +28,10 @@ void main()
         x = temp;
         i++;
     }
-        
-   
+    
+    gl_FragColor = texture2D(palette, vec2(float(i) / float(limit), 1));
+    
+    /*
     if (i == limit)
     {
         gl_FragColor = vec4(emptyColor, 1.0);
@@ -57,4 +60,5 @@ void main()
             0.6,
             1.0);
     }
+    */
 }

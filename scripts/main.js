@@ -32,8 +32,10 @@ async function main()
 	//Setup scene
     scene = new Three.Scene();
 
-    var vertex = await (await fetch('../shaders/mandelbrot.vert')).text()
+    var vertex = await (await fetch('../shaders/fullquad.vert')).text()
     var fragment = await (await fetch('../shaders/mandelbrot.frag')).text()
+
+    var palette = new Three.TextureLoader().load('./palettes/magma-palette.png');
 
     let uniforms =
     {
@@ -41,7 +43,8 @@ async function main()
         size: { type: 'vec2', value: new Three.Vector2(window.innerWidth, window.innerHeight) },
         offset: { type: 'vec2', value: offset },
         zoom: { type: 'float', value: zoom },
-        time: { type: 'float', value: 0 }
+        time: { type: 'float', value: 0 },
+        palette: { type: 't', value: palette },
     }
 
     let geometry = new Three.PlaneBufferGeometry(2, 2)
