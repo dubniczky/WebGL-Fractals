@@ -39,7 +39,7 @@ async function main()
     scene = new Three.Scene()
 
     var vertex = await (await fetch('../shaders/fullquad.vert')).text()
-    var fragment = await (await fetch('../shaders/mandelbrot.frag')).text()
+    var fragment = await (await fetch('../shaders/mandelbrot-3d.frag')).text()
 
     palettes.push(new Three.TextureLoader().load('./palettes/magma-palette.png'))
     palettes.push(new Three.TextureLoader().load('./palettes/magenteal-palette.png'))

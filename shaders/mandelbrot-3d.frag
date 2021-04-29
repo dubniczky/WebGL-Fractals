@@ -1,162 +1,130 @@
-uniform vec3 emptyColor; 
-uniform sampler2D palette;
-uniform int paletteDirection;
+#define DIFFERENTIAL_LIMIT 30
+#define RADIUS_LIMIT 2.
+#define WARP_SPEED .2
+#define REFERENCE_DIRECTION vec3(-1.0, 0.0, 0.0)
+#define MAX_MARCHING_STEPS 128
+#define DISTANCE_LOWER_LIMIT 0.0001
+#define FIELD_OF_VIEW 50.
+#define ZOOM .5
+#define CAMERA_OFFSET -.5
+#define TARGET_OFFSET vec3(0.)
 
+
+//Uniforms
 uniform vec2 size;
-uniform vec2 offset;
-uniform float linZoom;
-uniform float relZoom;
 uniform float time;
-uniform bool reversePalette;
-
-#define MARCHING_STEP 128
-
-/////
-// SDF Operation function
-/////
 
 
-vec3 opRep( in vec3 p, in vec3 c)
+//Convert from carthesian to polar unit coordinate
+vec3 polToCar(vec2 polar)
 {
-    vec3 q = mod(p+0.5*c,c)-0.5*c;
-    return q;
-}
-
-/////
-// Scene and primitive SDF function
-/////
-
-float sphereSDF(vec3 samplePoint) {
-    return length(samplePoint) - 1.0;
+    float x = sin(polar.x) * cos(polar.y);
+    float y = sin(polar.y) * sin(polar.x);
+    float z = cos(polar.x);
+    return vec3(x, y, z);
 }
 
 
-
-float sdPlane( vec3 p )
+//Convert from polar to carthesian unit coordinate
+vec2 carToPol(vec3 carte, float radius)
 {
-    return p.y;
+    float x = acos(carte.z / radius);
+    float y = atan(carte.y, carte.x);
+    return vec2(x, y);
 }
 
-#define Scale 2.
-#define iteration 15
-#define Power (7.+ sin(time/9.) * 5.)
-#define Bailout 5.
 
-float DE(vec3 pos) {
+//Solve mandeblrot differential equation at this position
+float mandelbrotDifferential(vec3 pos, float time)
+{
+    const int DifferentialLimit = DIFFERENTIAL_LIMIT;
+    const float RadiusLimit = RADIUS_LIMIT;
+    const float WarpSpeed = WARP_SPEED;
+
     vec3 z = pos;
-    float dr = 1.0;
-    float r = 0.0;
-    for (int i = 0; i < iteration ; i++) {
-        r = length(z);
-        if (r>Bailout) break;
-        
-        // convert to polar coordinates
-        float theta = acos(z.z/r);
-        float phi = atan(z.y,z.x);
-        dr =  pow( r, Power-1.0)*Power*dr + 1.0;
-        
-        // scale and rotate the point
-        float zr = pow( r,Power);
-        theta = theta*Power;
-        phi = phi*Power;
-        
-        // convert back to cartesian coordinates
-        z = zr*vec3(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
-        z+=pos;
-    }
-    return (0.5*log(r)*r/dr);
-}
+    float power = (9. + sin(time * WarpSpeed) * 5.);    
+    float rad = length(z);
+    float drad = 1.;
 
-float sceneSDF(vec3 samplePoint) {
-
-  
-    float res = DE(samplePoint);
-    //res += sdPlane(-0.5, vec4(0.,1.,0.,1.));
-    return res;
-   
-}
-
-
-/////
-// Ray function
-/////
-
-vec3 getCameraRayDir(vec2 uv, vec3 camPos, vec3 camTarget, float fov)
-{
-    // Calculate camera's "orthonormal basis", i.e. its transform matrix components
-    vec3 camForward = normalize(camTarget - camPos);
-    vec3 camRight = normalize(cross(vec3(0.0, 1.0, 0.0), camForward));
-    vec3 camUp = normalize(cross(camForward, camRight));
-     
-    float fPersp = 0.5 / tan(radians(fov)/ 2.0);
-    vec3 vDir = normalize(uv.x * camRight + uv.y * camUp + camForward * fPersp);
- 
-    return vDir;
-}
-
-vec3 rayDir(float fov, vec2 size, vec2 fragCoord)
-{
-    vec2 xy = fragCoord - size/2.0;
-    float z = size.y * 0.5 / tan(radians(fov)/ 2.0);
-    return normalize(vec3(xy,-z));
-}
-
-vec2 normalizeScreenCoords(vec2 screenCoord)
-{
-    vec2 result = 2.0 * (screenCoord/size.xy - 0.5);
-    result.x *= size.x/size.y;
-    return result;
-}
-
-/////
-// Marching function
-/////
-
-float march(vec3 pos, vec3 direction, float start, float end, inout int i)
-{
-    float depth = start;
-    for(i = 0; i < MARCHING_STEP; i++)
+    for (int i = 0; i < DifferentialLimit && rad < RadiusLimit; i++)
     {
-        float dist =  sceneSDF(pos + direction * depth);
-        if(dist < 0.0001f)
-        {
-            //return depth;
-            break;
-        }
-        depth += dist;
-        if(depth >= end)
-            return end;
+        //Convert to polar
+        vec2 polar = carToPol(z, rad);
+
+        //Scale
+        polar.x = polar.x * power;
+        polar.y = polar.y * power;
+        
+        //Convert to cartesian
+        vec3 cart = polToCar(polar);
+
+        //Apply
+        z = pow(rad, power) * cart + pos;        
+        drad = pow(rad, power - 1.) * power * drad + 1.;
+        rad = length(z);
     }
-    return depth;
+    
+    return log(rad) * rad / drad / 2.;
 }
 
 
-/////
-// Main function
-/////
+// Calculate camera ray matrix transform components (orthonormal basis)
+vec3 cameraRayDirection3(vec2 uv, vec3 camera, vec3 target, float fov)
+{
+    //Directions
+    vec3 forward = normalize(target - camera);
+    vec3 up = normalize(cross(forward, REFERENCE_DIRECTION));
+    vec3 right = normalize(cross(up, forward));
+    
+    //Perpective
+    float perspective = .5 / tan(radians(fov) / 2.0);
+ 
+    //Orthonormal
+    return normalize(uv.x * right + uv.y * up + forward * perspective);
+}
 
+
+//Raymarch mandelbrot
+int marchMandelbrot(vec3 pos, vec3 dir, float close, float far, float time)
+{
+    int i = 0;
+    float depth = close;
+    float dist = DISTANCE_LOWER_LIMIT + 1.;
+
+    for(i = 0;
+        i < MAX_MARCHING_STEPS &&
+            depth < far &&
+            dist > DISTANCE_LOWER_LIMIT;
+        i++)
+    {
+        dist = mandelbrotDifferential(pos + dir * depth, time);
+        depth += dist;
+    }
+
+    return i;
+}
+
+
+//Main
 void main()
 {
-    vec3 at = vec3(0, 0, 0);
-    vec2 uv = normalizeScreenCoords(gl_FragCoord.xy);
-    vec3 poss = vec3(cos(time/10.) * 1.75 ,sin(time/15.),sin(time/10.) * 1.75);
+    //Constants
+    const float CameraOffset = CAMERA_OFFSET;
+    const vec3 TargetOffset = TARGET_OFFSET;
+    const float zoom = ZOOM;
+    const float fov = FIELD_OF_VIEW;
+
+    //Get coordinates
+    vec2 uv = (gl_FragCoord.xy / size.xy + CameraOffset) / zoom;
+    uv.x *= size.x / size.y;
+    float t = time + 6.;
+    vec3 campos = vec3(cos(t / 10.) * 1.5, sin(t / 15.), sin(t / 10.) * 1.5);
+    vec3 direction = cameraRayDirection3(uv, campos, TargetOffset, fov);
     
-    int i = 0;
-    
-    vec3 dir = getCameraRayDir(uv, poss, at, 50.f);
-    
-    float dist = march(poss, dir, 0.f,200.f, i);
-    vec3 col = vec3(dist);
-    
-    if((dist - 200.f) > 0.001f)
-    {
-        col = vec3(0.0529, 0.0808, 0.0922);
-    }
-    else
-    {
-        col = vec3(dist*0.4); 
-        col = vec3(0.75 + sin(time/10.), 0.515, 0.053 + cos(time/10.)) * float(i)/float(MARCHING_STEP);
-    }
-    
-    gl_FragColor = vec4(col,1.0);
+    //Raymarch
+    int i = marchMandelbrot(campos, direction, 0.f, 200.f, t);
+
+    //Apply color
+    vec3 col = vec3(0.15, 0.95, 0.75) * float(i) / float(MAX_MARCHING_STEPS);    
+    gl_FragColor = vec4(col, 1.);
 }
