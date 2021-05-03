@@ -35,7 +35,7 @@ vec2 carToPol(vec3 carte, float radius)
 
 
 //Solve mandeblrot differential equation at this position
-float mandelbrotDifferential(vec3 pos, float time)
+float mandelbrotDifferential(vec3 pos, float time, inout float totalLength)
 {
     const int DifferentialLimit = DIFFERENTIAL_LIMIT;
     const float RadiusLimit = RADIUS_LIMIT;
@@ -62,6 +62,7 @@ float mandelbrotDifferential(vec3 pos, float time)
         z = pow(rad, power) * cart + pos;        
         drad = pow(rad, power - 1.) * power * drad + 1.;
         rad = length(z);
+        totalLength += rad;
     }
     
     return log(rad) * rad / drad / 2.;
@@ -73,7 +74,7 @@ vec3 cameraRayDirection3(vec2 uv, vec3 camera, vec3 target, float fov)
 {
     //Directions
     vec3 forward = normalize(target - camera);
-    vec3 up = normalize(cross(forward, REFERENCE_DIRECTION));
+    vec3 up = normalize(cross(forward, vec3(1., 0., 0.)));
     vec3 right = normalize(cross(up, forward));
     
     //Perpective
@@ -85,11 +86,12 @@ vec3 cameraRayDirection3(vec2 uv, vec3 camera, vec3 target, float fov)
 
 
 //Raymarch mandelbrot
-int marchMandelbrot(vec3 pos, vec3 dir, float close, float far, float time)
+float marchMandelbrot(vec3 pos, vec3 dir, float close, float far, float time, inout int i, inout float lengthMin)
 {
-    int i = 0;
     float depth = close;
+    float minDist = 100.;
     float dist = DISTANCE_LOWER_LIMIT + 1.;
+    float totalLength = 0.;
 
     for(i = 0;
         i < MAX_MARCHING_STEPS &&
@@ -97,11 +99,17 @@ int marchMandelbrot(vec3 pos, vec3 dir, float close, float far, float time)
             dist > DISTANCE_LOWER_LIMIT;
         i++)
     {
-        dist = mandelbrotDifferential(pos + dir * depth, time);
+        
+        dist = mandelbrotDifferential(pos + dir * depth, time, totalLength);
         depth += dist;
+        if (dist < minDist)
+        {
+            minDist = dist;
+        }
+        if (lengthMin > totalLength) lengthMin = totalLength;
     }
 
-    return i;
+    return totalLength;
 }
 
 
@@ -122,9 +130,16 @@ void main()
     vec3 direction = cameraRayDirection3(uv, campos, TargetOffset, fov);
     
     //Raymarch
-    int i = marchMandelbrot(campos, direction, 0.f, 200.f, t);
+    int i = 0;
+    float len = 10000.;
+    float dist = marchMandelbrot(campos, direction, 0.f, 200.f, t, i, len);
+    float d = 1. - (dist * 50.);
+    len /= 300.;
+
+    //vec3 col = vec3(d, 0.9 * len, 0.7 * dist) * float(i) / float(MAX_MARCHING_STEPS);
+    vec3 col = vec3(d, 0., float(i) / float(MAX_MARCHING_STEPS));
+    
 
     //Apply color
-    vec3 col = vec3(0.15, 0.95, 0.75) * float(i) / float(MAX_MARCHING_STEPS);    
     gl_FragColor = vec4(col, 1.);
 }

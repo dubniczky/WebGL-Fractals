@@ -39,7 +39,7 @@ async function main()
     scene = new Three.Scene()
 
     var vertex = await (await fetch('../shaders/fullquad.vert')).text()
-    var fragment = await (await fetch('../shaders/mandelbrot-3d.frag')).text()
+    var fragment = await (await fetch('../shaders/truchet.frag')).text()
 
     palettes.push(new Three.TextureLoader().load('./palettes/magma-palette.png'))
     palettes.push(new Three.TextureLoader().load('./palettes/magenteal-palette.png'))
@@ -54,6 +54,7 @@ async function main()
         time:           { type: 'float', value: 0 },
         palette:        { type: 't',     value: palettes[0] },
         reversePalette: { type: 'bool',  value: reversePalette },
+        MousePosition:  { type: 'vec2',  value: new Three.Vector2(0, 0) },
     }
 
     let geometry = new Three.PlaneBufferGeometry(2, 2)
@@ -152,6 +153,12 @@ function onMouseMove(e)
     }
 
     mousePos = pos
+
+    let rect = canvas.getBoundingClientRect();
+    let x = e.x / rect.width
+    let y = e.y / rect.height
+        
+    mesh.material.uniforms.MousePosition.value = new Three.Vector2(x, 1 - y)
 }
 function onMouseDown(e)
 {

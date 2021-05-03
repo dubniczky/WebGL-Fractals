@@ -38,13 +38,18 @@ float modulation4(float x, float time)
 //Spiral tube
 float modulation5(float x, float time)
 {
-    return fract(sin(x * 58934.23546 + time));
+    return fract(sin(x * 5389934.23546 + time + 2.9820384) * sin(x * 42358.0912783 + time + 2.9820384));
 }
 
 //Spiral tube
 float modulation6(float x, float time)
 {
     return fract(sin(x * 58934.23546 + time));
+}
+
+float random(vec2 point, float time)
+{
+    return fract(sin(dot(point.xy, vec2(7.12734, 799.1235))) * 612356.123964);
 }
 
 
@@ -59,8 +64,9 @@ void main()
     //float s = modulation2(pos.x, time);
     //float s = modulation3(pos.x, time);
     //float s = modulation4(pos.x, time);
-    float s = modulation5(pos.x, time);
+    //float s = modulation5(pos.x, time);
 
+    /*
     vec3 color;
     if (abs(s - pos.y) < treshold)
     {
@@ -69,7 +75,11 @@ void main()
     else
     {
         color = vec3(0.);
-    }
+    }*/
+
+    float x = random(pos, time);
+
+    vec3 color = vec3(x);
 
     gl_FragColor = vec4(color, 1.);
 }
