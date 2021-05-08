@@ -97,7 +97,7 @@ void main()
 
     vec3 color = vec3(intensity);
 
-    float mouseDistance = distance(MousePosition, coord);
+    float mouseDistance = distance(MousePosition, coord.xy);
     if (mouseDistance < .1 && intensity >= 0.9)
     {
         color.xyz = vec3(0.);
