@@ -1,21 +1,29 @@
+'use strict'
 
-//DOM
-const Three = THREE
-
-var canvas
+//Constants
+const defaultShaderIndex = 0
 
 //Three
-var camera
-var scene
-var renderer
-var geometry
-var material
-var mesh
+const Three = THREE
+var canvas
+var camera = null
+var scene = null
+var renderer = null
+var geometry = null
+var material = null
+var mesh = null
 var objects = []
 var palettes = []
+var shaders = []
 var currentPalette = 0
 var reversePalette = false
 var stats = null
+var geometry = null
+var material = null
+var uniforms = null
+var vertex = null
+var shaderId = 0
+var shaderTime = null
 
 //Effects
 var linZoom = 1
@@ -27,52 +35,65 @@ var offset = null
 
 async function main()
 {
+    //Load DOM objects
     canvas = document.getElementById('main-canvas')
 
-    
-    //Setup camera
-    setupDefaults()
+    //Load shaders
+    var loadShader = async (file) => await (await fetch('../shaders/' + file)).text()    
+    //Vertex
+    vertex = await loadShader('fullquad.vert')    
+    //Fragment
+    shaders.push(await loadShader('mandelbrot.frag'))
+    shaders.push(await loadShader('mandelbulb.frag'))
+    shaders.push(await loadShader('discretebodies.frag'))
+    shaders.push(await loadShader('mellowbodies.frag'))
+    shaders.push(await loadShader('noise.frag'))
+    shaders.push(await loadShader('radar.frag'))
+    shaders.push(await loadShader('rainbowflower.frag'))
+    shaders.push(await loadShader('random.frag'))
+    shaders.push(await loadShader('raymarch.frag'))
+    shaders.push(await loadShader('shapes.frag'))
+    shaders.push(await loadShader('smears.frag'))
+    shaders.push(await loadShader('truchet.frag'))
+    shaders.push(await loadShader('wave.frag'))
+
+    //Load textures
+    const textureLoader = new Three.TextureLoader()
+    palettes.push(textureLoader.load('./palettes/magma-palette.png'))
+    palettes.push(textureLoader.load('./palettes/magenteal-palette.png'))
+    palettes.push(textureLoader.load('./palettes/rainbow-palette.png'))
+
+    //Setup scene
+    scene = new Three.Scene()
+    scene.autoUpdate = false
 	camera = new Three.OrthographicCamera( -1, 1, 1, -1, 0, 1 )
 	camera.position.z = 1
-
-	//Setup scene
-    scene = new Three.Scene()
-
-    var vertex = await (await fetch('../shaders/fullquad.vert')).text()
-    var fragment = await (await fetch('../shaders/random.frag')).text()
-
-    palettes.push(new Three.TextureLoader().load('./palettes/magma-palette.png'))
-    palettes.push(new Three.TextureLoader().load('./palettes/magenteal-palette.png'))
-    palettes.push(new Three.TextureLoader().load('./palettes/rainbow-palette.png'))
-
-    let uniforms =
+    
+    setupDefaults()
+    uniforms =
     {
-        size:           { type: 'vec2',  value: new Three.Vector2(window.innerWidth, window.innerHeight) },
-        offset:         { type: 'vec2',  value: offset },
-        relZoom:        { type: 'float', value: relZoom },
-        linZoom:        { type: 'float', value: 1.0 },
-        time:           { type: 'float', value: 0 },
-        palette:        { type: 't',     value: palettes[0] },
-        reversePalette: { type: 'bool',  value: reversePalette },
+        Resolution:     { type: 'vec2',  value: new Three.Vector2(window.innerWidth, window.innerHeight) },
+        Offset:         { type: 'vec2',  value: offset },
+        Zoom:           { type: 'vec2',  value: new Three.Vector2(window.linZoom, window.relZoom) },
+        Time:           { type: 'float', value: 0 },
+        Palette:        { type: 't',     value: palettes[0] },
+        ReversePalette: { type: 'bool',  value: reversePalette },
         MousePosition:  { type: 'vec2',  value: new Three.Vector2(0, 0) },
+        MouseLeftDown:  { type: 'bool',  value: false },
+        MouseRightDown: { type: 'bool',  value: false },
     }
 
-    let geometry = new Three.PlaneBufferGeometry(2, 2)
-    let material =  new Three.ShaderMaterial(
-    {
-        uniforms: uniforms,
-        fragmentShader: fragment,
-        vertexShader: vertex,
-    })
-
-    
-
-    mesh = new Three.Mesh(geometry, material)
-    scene.add(mesh)
-    objects.push(mesh)
+    geometry = new Three.PlaneBufferGeometry(2, 2)
+    applyShader(defaultShaderIndex)
 
     //Setup renderer
-	renderer = new Three.WebGLRenderer( { antialias: true, canvas } )
+	renderer = new Three.WebGLRenderer(
+    {
+        antialias: false,
+        canvas: canvas,
+        powerPerformance: 'high-performance',
+        depth: false
+    })
 	renderer.setSize( window.innerWidth, window.innerHeight, false )
 	renderer.setAnimationLoop( render )
 
@@ -85,6 +106,7 @@ async function main()
     window.addEventListener('keydown', (e) => onKeyDown(e))
 
     stats = createStats()
+    
     document.body.appendChild( stats.domElement )
 }
 
@@ -107,7 +129,7 @@ function setupDefaults()
 //Render loop
 function render(time)
 {
-    mesh.material.uniforms.time.value = time / 1000.0
+    mesh.material.uniforms.Time.value = (Date.now() - shaderTime) / 1000.0
 	renderer.render( scene, camera )
     stats.update()
 }
@@ -122,6 +144,8 @@ function onWindowResized(e)
     renderer.setSize( canvas.width, canvas.height, false )
     camera.aspect = canvas.width / canvas.height
     camera.updateProjectionMatrix()
+
+    mesh.material.uniforms.Resolution.value = new Three.Vector2(canvas.width, canvas.height)
 }
 function onMouseScroll(e)
 {
@@ -138,8 +162,7 @@ function onMouseScroll(e)
         linZoom += .25
     }
     
-    mesh.material.uniforms.linZoom.value = linZoom
-    mesh.material.uniforms.relZoom.value = relZoom
+    mesh.material.uniforms.Zoom.value = new Three.Vector2(linZoom, relZoom)
 }
 function onMouseMove(e)
 {
@@ -178,11 +201,52 @@ function onKeyDown(e)
         case "KeyR":
             updatePaletteReverse()
             break;
+        case "ArrowRight":
+            cycleShader(+1)
+            break;
+            case "ArrowLeft":
+            cycleShader(-1)
+            break;
     }
 }
 
 
 //Methods
+function resetUniform()
+{
+    shaderTime = Date.now()
+}
+function cycleShader(delta)
+{
+    applyShader(shaderId + delta % shaders.length)
+}
+function applyShader(shaderIndex)
+{
+    shaderId = shaderIndex
+
+    //Create shader material
+    material =  new Three.ShaderMaterial(
+    {
+        uniforms: uniforms,
+        fragmentShader: shaders[shaderId],
+        vertexShader: vertex,
+    })    
+
+    //Remove previous shader
+    if (mesh != null)
+    {
+        scene.remove(mesh)
+        mesh.geometry.dispose()
+        mesh.material.dispose()
+        mesh = null
+    }
+    
+    //Apply shader
+    mesh = new Three.Mesh(geometry, material)
+    scene.add(mesh)
+    objects.push(mesh)
+    resetUniform()
+}
 function createStats()
 {
     var stats = new Stats();
@@ -193,23 +257,23 @@ function createStats()
     stats.domElement.style.top = '0';
 
     return stats;
-  }
+}
 function updateOffset(direction)
 {
     offset.x -= direction.x * relZoom * 0.002
     offset.y += direction.y * relZoom * 0.002
 
-    mesh.material.uniforms.offset.value = offset
+    mesh.material.uniforms.Offset.value = offset
 }
 function updatePalette(newIndex = 0)
 {
     currentPalette = newIndex % palettes.length
-    mesh.material.uniforms.palette.value = palettes[currentPalette]
+    mesh.material.uniforms.Palette.value = palettes[currentPalette]
 }
 function updatePaletteReverse()
 {
     reversePalette = !reversePalette
-    mesh.material.uniforms.reversePalette.value = reversePalette
+    mesh.material.uniforms.ReversePalette.value = reversePalette
 }
 
 

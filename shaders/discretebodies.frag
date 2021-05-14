@@ -1,14 +1,10 @@
-uniform vec3 emptyColor; 
-uniform sampler2D palette;
-uniform int paletteDirection;
+uniform sampler2D Palette;
+uniform bool ReversePalette;
 
-uniform vec2 size;
-uniform vec2 offset;
-uniform float linZoom;
-uniform float relZoom;
-uniform float time;
-
-in vec3 pos;
+uniform vec2 Resolution;
+uniform vec2 Offset;
+uniform vec2 Zoom;
+uniform float Time;
 
 vec2 random2( vec2 p )
 {
@@ -17,12 +13,12 @@ vec2 random2( vec2 p )
 
 void main()
 {
-    vec2 st = gl_FragCoord.xy / size.xy;
-    st.x *= size.x / size.y;
+    vec2 st = gl_FragCoord.xy / Resolution.xy;
+    st.x *= Resolution.x / Resolution.y;
     float intensity = 0.;
 
     // Scale
-    st *= 10. * linZoom;
+    st *= 10. * Zoom.x;
 
     // Tile the space
     vec2 sti = floor(st);
@@ -41,7 +37,7 @@ void main()
             vec2 point = random2(sti + neighbor);
 
 			// Animate the point
-            point = 0.5 + 0.1 * sin(time + 6.2831*point);
+            point = 0.5 + 0.1 * sin(Time + 6.2831*point);
 
 			// Vector between the pixel and the point
             vec2 diff = neighbor + point - stf;
@@ -72,7 +68,7 @@ void main()
         if (col < intensity) col += 0.1;
     }
 
-    vec4 texLayer = texture2D(palette, vec2(1.0 - col, 1));
+    vec4 texLayer = texture2D(Palette, vec2(1.0 - col, 1));
 
     gl_FragColor = texLayer;
 }

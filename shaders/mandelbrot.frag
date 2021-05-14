@@ -1,23 +1,21 @@
-uniform vec3 emptyColor; 
-uniform sampler2D palette;
-uniform int paletteDirection;
+uniform sampler2D Palette;
+uniform bool ReversePalette;
 
-uniform vec2 size;
-uniform vec2 offset;
-uniform float linZoom;
-uniform float relZoom;
-uniform float time;
-uniform bool reversePalette;
+uniform vec2 Resolution;
+uniform vec2 Offset;
+uniform vec2 Zoom;
+uniform float Time;
 
-in vec3 pos;
 
 void main()
 {
-    float t = (sin(time / 1000.0) + 1.0) * 0.5;
+    float t = (sin(Time / 1000.0) + 1.0) * 0.5;
 
     //Coords
-    float x0 = offset.x + (pos.x * (size.x / size.y)) * relZoom;
-    float y0 = offset.y + (pos.y) * relZoom;
+    vec2 off = Offset.xy;
+    vec2 pos = gl_FragCoord.xy / Resolution.xy - vec2(.5);
+    float x0 = off.x + (pos.x) * Zoom.y;
+    float y0 = off.y + (pos.y) * Zoom.y;
 
     float x = 0.0;
     float y = 0.0;
@@ -33,27 +31,26 @@ void main()
     }
     const float speed = .3;
     float percent = float(i) / float(limit);
-    float percentr = (reversePalette) ? percent : 1.0 - percent;
+    float percentr = (ReversePalette) ? percent : 1.0 - percent;
 
     //Apply palette
-    vec4 texLayer = texture2D(palette, vec2(percentr, 1.));
+    vec4 texLayer = texture2D(Palette, vec2(percentr, 1.));
 
     //Apply wave
     if (i != limit)
     {
-        float timePercent = sin(fract((1. - time) * speed));
+        float timePercent = sin(fract((Time) * speed));
+        float reverse = 1. - timePercent;
         if (timePercent - percent < 0.05 && timePercent - percent > 0.)
         {
-            texLayer += vec4(vec3(0.1) * timePercent, 1.0);
+            texLayer += vec4(vec3(0.1) * reverse, 1.0);
         }
         if (abs(timePercent - percent) < 0.01)
         {
-            texLayer += vec4(vec3(0.2) * timePercent, 1.0);
+            texLayer += vec4(vec3(0.2) * reverse, 1.0);
         }
         
     }
     
-    
-    //texLayer -= smoothstep(.15,.2,noise(vec2(x, y * 100.)));
     gl_FragColor = texLayer;
 }

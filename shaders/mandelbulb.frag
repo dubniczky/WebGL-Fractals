@@ -11,8 +11,9 @@
 
 
 //Uniforms
-uniform vec2 size;
-uniform float time;
+uniform vec2 Resolution;
+uniform vec2 Zoom;
+uniform float Time;
 
 
 //Convert from carthesian to polar unit coordinate
@@ -123,9 +124,9 @@ void main()
     const float fov = FIELD_OF_VIEW;
 
     //Get coordinates
-    vec2 uv = (gl_FragCoord.xy / size.xy + CameraOffset) / zoom;
-    uv.x *= size.x / size.y;
-    float t = time + 6.;
+    vec2 uv = (gl_FragCoord.xy / Resolution.xy + CameraOffset) / zoom;
+    uv.x *= Resolution.x / Resolution.y;
+    float t = Time + 6.;
     vec3 campos = vec3(cos(t / 10.) * 1.5, sin(t / 15.), sin(t / 10.) * 1.5);
     vec3 direction = cameraRayDirection3(uv, campos, TargetOffset, fov);
     
