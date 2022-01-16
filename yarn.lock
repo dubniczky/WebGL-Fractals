@@ -877,6 +877,13 @@ mimic-fn@^2.1.0:
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-2.1.0.tgz#7ed2c2ccccaf84d3ffcb7a69b57711fc2083401b"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
 
+mini-css-extract-plugin@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-2.5.0.tgz#4cc8300165fd408e8d2bf7381e6728fcda6fd1ae"
+  integrity sha512-hWAswjzsausaaIjk4GiUtoiNnsMc8tLAA2TZ0vbMDZcxKYS/b3UBGNElBjgQ4QYztYR+nsKp5h2Lo1NL3zz2bg==
+  dependencies:
+    schema-utils "^4.0.0"
+
 minimist@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
