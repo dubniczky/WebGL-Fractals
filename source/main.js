@@ -1,5 +1,5 @@
 import * as Three from 'three'
-import * as Stats from './stats.js'
+import * as Stats from 'stats-js'
 import shaders from './shaders'
 
 
