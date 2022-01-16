@@ -94,7 +94,7 @@ async function main()
     window.addEventListener('keydown', (e) => onKeyDown(e))
     console.log('Events loaded.')
 
-    stats = Stats.createStats()
+    stats = createStats()
     document.body.appendChild( stats.domElement )
     console.log('Stats loaded.')
 }
