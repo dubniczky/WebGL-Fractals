@@ -1,5 +1,5 @@
 import * as Three from 'three'
-import Stats from './stats.js'
+import * as Stats from './stats.js'
 
 'use strict'
 
@@ -7,7 +7,6 @@ import Stats from './stats.js'
 const defaultShaderIndex = 0
 
 //Three
-//const Three = THREE
 var canvas
 var camera = null
 var scene = null
