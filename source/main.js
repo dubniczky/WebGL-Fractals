@@ -1,10 +1,13 @@
+import * as Three from 'three'
+import Stats from './stats.js'
+
 'use strict'
 
 //Constants
 const defaultShaderIndex = 0
 
 //Three
-const Three = THREE
+//const Three = THREE
 var canvas
 var camera = null
 var scene = null
@@ -105,7 +108,7 @@ async function main()
     canvas.addEventListener('mouseup', (e) => onMouseUp(e))
     window.addEventListener('keydown', (e) => onKeyDown(e))
 
-    stats = createStats()
+    stats = Stats.createStats()
     
     document.body.appendChild( stats.domElement )
 }
