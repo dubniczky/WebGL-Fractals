@@ -33,10 +33,16 @@ module.exports = {
     },
     module: {
         rules: [
+            // CSS Styles
             {
                 test: /\.css$/i,
                 use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
+            // GLSL Fragments
+            {
+                test: /\.(frag|vert)$/,
+                use: 'file-loader'
+            }
         ],
     },
 }
