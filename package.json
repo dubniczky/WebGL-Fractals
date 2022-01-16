@@ -1,0 +1,31 @@
+{
+    "name": "web-fractal",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://gitlab.com/richardnagy/webprojects/webfractals.git"
+    },
+    "author": "Richard Antal Nagy",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitlab.com/richardnagy/webprojects/webfractals/issues"
+    },
+    "homepage": "https://gitlab.com/richardnagy/webprojects/webfractals#readme",
+    "devDependencies": {
+        "copy-webpack-plugin": "^10.2.0",
+        "css-loader": "^6.5.1",
+        "file-loader": "^6.2.0",
+        "terser-webpack-plugin": "^5.3.0",
+        "uglify-js": "^3.14.5",
+        "webpack": "^5.66.0",
+        "webpack-cli": "^4.9.1"
+    },
+    "dependencies": {
+        "http-server": "^14.1.0"
+    }
+}
