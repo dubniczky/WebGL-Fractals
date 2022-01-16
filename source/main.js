@@ -60,7 +60,7 @@ async function main()
     {
         Resolution:     { type: 'vec2',  value: new Three.Vector2(window.innerWidth, window.innerHeight) },
         Offset:         { type: 'vec2',  value: offset },
-        Zoom:           { type: 'vec2',  value: new Three.Vector2(window.linZoom, window.relZoom) },
+        Zoom:           { type: 'vec2',  value: new Three.Vector2(linZoom, relZoom) },
         Time:           { type: 'float', value: 0 },
         Palette:        { type: 't',     value: palettes[0] },
         ReversePalette: { type: 'bool',  value: reversePalette },
