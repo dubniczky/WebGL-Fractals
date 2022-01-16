@@ -1,8 +1,4 @@
-uniform sampler2D Palette;
-
-uniform vec2 Resolution;
-uniform vec2 Zoom;
-uniform float Time;
+@include "./uniform.frag"
 
 in vec3 pos;
 

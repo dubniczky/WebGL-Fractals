@@ -1,3 +1,6 @@
+//Uniforms
+@include "./uniform.frag"
+
 #define DIFFERENTIAL_LIMIT 30
 #define RADIUS_LIMIT 2.
 #define WARP_SPEED .2
@@ -8,12 +11,6 @@
 #define ZOOM .5
 #define CAMERA_OFFSET -.5
 #define TARGET_OFFSET vec3(0.)
-
-
-//Uniforms
-uniform vec2 Resolution;
-uniform vec2 Zoom;
-uniform float Time;
 
 
 //Convert from carthesian to polar unit coordinate

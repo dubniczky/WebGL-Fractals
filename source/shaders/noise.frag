@@ -1,7 +1,4 @@
-uniform sampler2D Palette;
-
-uniform vec2 Resolution;
-uniform float Time;
+@include "./uniform.frag"
 
 float random (in vec2 st) {
     return fract(sin(dot(st.xy,
