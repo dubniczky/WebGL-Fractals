@@ -1,16 +1,7 @@
-uniform vec3 emptyColor; 
-uniform sampler2D palette;
-uniform int paletteDirection;
+uniform sampler2D Palette;
 
-uniform vec2 size;
-uniform vec2 offset;
-uniform float linZoom;
-uniform float relZoom;
-uniform float time;
-uniform bool reversePalette;
-
-in vec3 pos;
-
+uniform vec2 Resolution;
+uniform float Time;
 
 float random (in vec2 st) {
     return fract(sin(dot(st.xy,
@@ -43,17 +34,17 @@ float noise (in vec2 st) {
 
 void main()
 {
-    vec2 st = gl_FragCoord.xy / size.xy * 5.;
+    vec2 st = gl_FragCoord.xy / Resolution.xy * 5.;
 
 
     float intensity;
-    intensity += smoothstep(.15, .2,noise(st * 10. + time)); // Black splatter
-    intensity -= smoothstep(.35, .4,noise(st * 10. + time)); // Holes on splatter
-    intensity += smoothstep(.55, .8,noise(st * 10. + time));
-    intensity += smoothstep(.65, 1.,noise(st * 10. + time));
+    intensity += smoothstep(.15, .2,noise(st * 10. + Time)); // Black splatter
+    intensity -= smoothstep(.35, .4,noise(st * 10. + Time)); // Holes on splatter
+    intensity += smoothstep(.55, .8,noise(st * 10. + Time));
+    intensity += smoothstep(.65, 1.,noise(st * 10. + Time));
     
     
-    vec4 color = texture2D(palette, vec2(intensity, 1.));
+    vec4 color = texture2D(Palette, vec2(intensity, 1.));
 
     gl_FragColor = vec4(vec3(color), 1.0);
 }
