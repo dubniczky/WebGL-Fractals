@@ -14,19 +14,19 @@ import wave from './shaders/wave.frag'
 import fullquad from './shaders/fullquad.vert'
 
 export default {
-    vertex: fullquad,
+    vertex: fullquad.sourceCode,
     fragment: [
-        { name: 'mandelbrot', source: mandelbrot },
-        { name: 'mandelbulb', source: mandelbulb },
-        { name: 'discretebodies', source: discretebodies },
-        { name: 'mellowbodies', source: mellowbodies },
-        { name: 'noise', source: noise },
-        { name: 'rainbowflower', source: rainbowflower },
-        { name: 'random', source: random },
-        { name: 'raymarch', source: raymarch },
-        { name: 'shapes', source: shapes },
-        { name: 'smears', source: smears },
-        { name: 'truchet', source: truchet },
-        { name: 'wave', source: wave },
+        { name: 'mandelbrot', source: mandelbrot.sourceCode },
+        { name: 'mandelbulb', source: mandelbulb.sourceCode },
+        { name: 'discretebodies', source: discretebodies.sourceCode },
+        { name: 'mellowbodies', source: mellowbodies.sourceCode },
+        { name: 'noise', source: noise.sourceCode },
+        { name: 'rainbowflower', source: rainbowflower.sourceCode },
+        { name: 'random', source: random.sourceCode },
+        { name: 'raymarch', source: raymarch.sourceCode },
+        { name: 'shapes', source: shapes.sourceCode },
+        { name: 'smears', source: smears.sourceCode },
+        { name: 'truchet', source: truchet.sourceCode },
+        { name: 'wave', source: wave.sourceCode },
     ]
 }

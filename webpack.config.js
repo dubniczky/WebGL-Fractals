@@ -41,7 +41,13 @@ module.exports = {
             // GLSL Fragments
             {
                 test: /\.(frag|vert)$/i,
-                type: 'asset/source'
+                use: {
+                    loader: 'webpack-glsl-minify',
+                    options: {
+                        preserveUniforms: true,
+                        preserveVariables: true
+                    }
+                },
             }
         ],
     },
