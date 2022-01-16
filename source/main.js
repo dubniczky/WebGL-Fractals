@@ -1,13 +1,16 @@
+'use strict'
+
 import * as Three from 'three'
 import * as Stats from './stats.js'
 import shaders from './shaders'
 
-'use strict'
 
 //Constants
 const defaultShaderIndex = 0
 
 //Three
+let fragment = shaders.fragment
+let vertex = shaders.vertex
 var canvas
 var camera = null
 var scene = null
@@ -23,7 +26,6 @@ var stats = null
 var geometry = null
 var material = null
 var uniforms = null
-var vertex = null
 var shaderId = 0
 var shaderTime = null
 
@@ -39,26 +41,21 @@ async function main()
 {
     //Load DOM objects
     canvas = document.getElementById('main-canvas')
-
-    //Load shaders
-    var loadShader = async (file) => await (await fetch('../shaders/' + file)).text()    
-    //Vertex
-    vertex = await loadShader('fullquad.vert')
-    //Fragment
-    
-    console.log('Shaders loaded.')
-
+    console.log('DOM loaded.')
+   
     //Load textures
     const textureLoader = new Three.TextureLoader()
     palettes.push(textureLoader.load('./palettes/magma-palette.png'))
     palettes.push(textureLoader.load('./palettes/magenteal-palette.png'))
     palettes.push(textureLoader.load('./palettes/rainbow-palette.png'))
+    console.log('Textures loaded.')
 
     //Setup scene
     scene = new Three.Scene()
     scene.autoUpdate = false
 	camera = new Three.OrthographicCamera( -1, 1, 1, -1, 0, 1 )
 	camera.position.z = 1
+    console.log('Scene loaded.')
     
     setupDefaults()
     uniforms =
@@ -73,6 +70,7 @@ async function main()
         MouseLeftDown:  { type: 'bool',  value: false },
         MouseRightDown: { type: 'bool',  value: false },
     }
+    console.log('Uniforms loaded.')
 
     geometry = new Three.PlaneBufferGeometry(2, 2)
     applyShader(defaultShaderIndex)
@@ -87,6 +85,7 @@ async function main()
     })
 	renderer.setSize( window.innerWidth, window.innerHeight, false )
 	renderer.setAnimationLoop( render )
+    console.log('Renderer loaded.')
 
     //Setup events
     window.addEventListener('resize', (e) => onWindowResized(e))
@@ -95,10 +94,11 @@ async function main()
     canvas.addEventListener('mousedown', (e) => onMouseDown(e))
     canvas.addEventListener('mouseup', (e) => onMouseUp(e))
     window.addEventListener('keydown', (e) => onKeyDown(e))
+    console.log('Events loaded.')
 
     stats = Stats.createStats()
-    
     document.body.appendChild( stats.domElement )
+    console.log('Stats loaded.')
 }
 
 function setupDefaults()
@@ -219,7 +219,7 @@ function applyShader(shaderIndex)
     material =  new Three.ShaderMaterial(
     {
         uniforms: uniforms,
-        fragmentShader: shaders[shaderId],
+        fragmentShader: fragment[shaderId].source,
         vertexShader: vertex,
     })    
 

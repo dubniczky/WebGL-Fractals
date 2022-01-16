@@ -11,8 +11,11 @@ import smears from './shaders/smears.frag'
 import truchet from './shaders/truchet.frag'
 import wave from './shaders/wave.frag'
 
+import fullquad from './shaders/fullquad.vert'
+
 export default {
-    shaders: [
+    vertex: fullquad,
+    fragment: [
         { name: 'mandelbrot', source: mandelbrot },
         { name: 'mandelbulb', source: mandelbulb },
         { name: 'discretebodies', source: discretebodies },
