@@ -1,5 +1,6 @@
 import * as Three from 'three'
 import * as Stats from './stats.js'
+import shaders from './shaders'
 
 'use strict'
 
@@ -43,20 +44,9 @@ async function main()
     //Load shaders
     var loadShader = async (file) => await (await fetch('../shaders/' + file)).text()    
     //Vertex
-    vertex = await loadShader('fullquad.vert')    
+    vertex = await loadShader('fullquad.vert')
     //Fragment
-    shaders.push(await loadShader('mandelbrot.frag'))
-    shaders.push(await loadShader('mandelbulb.frag'))
-    shaders.push(await loadShader('discretebodies.frag'))
-    shaders.push(await loadShader('mellowbodies.frag'))
-    shaders.push(await loadShader('noise.frag'))
-    shaders.push(await loadShader('rainbowflower.frag'))
-    shaders.push(await loadShader('random.frag'))
-    shaders.push(await loadShader('raymarch.frag'))
-    shaders.push(await loadShader('shapes.frag'))
-    shaders.push(await loadShader('smears.frag'))
-    shaders.push(await loadShader('truchet.frag'))
-    shaders.push(await loadShader('wave.frag'))
+    
     console.log('Shaders loaded.')
 
     //Load textures
