@@ -7,32 +7,29 @@ import shaders from './shaders'
 const defaultShaderIndex = 0
 
 //Three
-let fragment = shaders.fragment
-let vertex = shaders.vertex
-var canvas
-var camera = null
-var scene = null
-var renderer = null
-var geometry = null
-var material = null
-var mesh = null
-var objects = []
-var palettes = []
-var currentPalette = 0
-var reversePalette = false
-var stats = null
-var geometry = null
-var material = null
-var uniforms = null
-var shaderId = 0
-var shaderTime = null
+let fragments = null
+let vertex = null
+let canvas = null
+let camera = null
+let scene = null
+let renderer = null
+let geometry = null
+let material = null
+let mesh = null
+let palettes = null
+let currentPalette = null
+let reversePalette = null
+let stats = null
+let uniforms = null
+let shaderId = 0
+let shaderTime = null
 
 //Effects
-var linZoom = 1
-var relZoom = 1
-var mousePos = new Three.Vector2(0, 0)
-var mouseDown = false
-var offset = null
+let linZoom = 1
+let relZoom = 1
+let mousePos = new Three.Vector2(0, 0)
+let mouseDown = false
+let offset = null
 
 
 async function main()
@@ -40,12 +37,19 @@ async function main()
     //Load DOM objects
     canvas = document.getElementById('main-canvas')
     console.log('DOM loaded.')
+
+    //Load shaders
+    fragments = shaders.fragment
+    vertex = shaders.vertex
    
     //Load textures
     const textureLoader = new Three.TextureLoader()
+    palettes = []
     palettes.push(textureLoader.load('./palettes/magma-palette.png'))
     palettes.push(textureLoader.load('./palettes/magenteal-palette.png'))
     palettes.push(textureLoader.load('./palettes/rainbow-palette.png'))
+    currentPalette = 0
+    reversePalette = false
     console.log('Textures loaded.')
 
     //Setup scene
@@ -118,7 +122,7 @@ function setupDefaults()
 //Render loop
 function render(time)
 {
-    mesh.material.uniforms.Time.value = (Date.now() - shaderTime) / 1000.0
+    updateUniform('Time', (Date.now() - shaderTime) / 1000.0)
 	renderer.render( scene, camera )
     stats.update()
 }
@@ -134,7 +138,7 @@ function onWindowResized(e)
     camera.aspect = canvas.width / canvas.height
     camera.updateProjectionMatrix()
 
-    mesh.material.uniforms.Resolution.value = new Three.Vector2(canvas.width, canvas.height)
+    updateUniform('Resolution', new Three.Vector2(canvas.width, canvas.height))
 }
 function onMouseScroll(e)
 {
@@ -151,7 +155,7 @@ function onMouseScroll(e)
         linZoom += .25
     }
     
-    mesh.material.uniforms.Zoom.value = new Three.Vector2(linZoom, relZoom)
+    updateUniform('Zoom', new Three.Vector2(linZoom, relZoom))
 }
 function onMouseMove(e)
 {
@@ -170,7 +174,7 @@ function onMouseMove(e)
     let x = e.x / rect.width
     let y = e.y / rect.height
         
-    mesh.material.uniforms.MousePosition.value = new Three.Vector2(x, 1 - y)
+    updateUniform('MousePosition', new Three.Vector2(x, 1 - y))
 }
 function onMouseDown(e)
 {
@@ -201,6 +205,9 @@ function onKeyDown(e)
 
 
 //Methods
+function updateUniform(name, value) {
+    mesh.material.uniforms[name].value = value
+}
 function resetUniform()
 {
     shaderTime = Date.now()
@@ -217,7 +224,7 @@ function applyShader(shaderIndex)
     material =  new Three.ShaderMaterial(
     {
         uniforms: uniforms,
-        fragmentShader: fragment[shaderId].source,
+        fragmentShader: fragments[shaderId].source,
         vertexShader: vertex,
     })    
 
@@ -233,7 +240,6 @@ function applyShader(shaderIndex)
     //Apply shader
     mesh = new Three.Mesh(geometry, material)
     scene.add(mesh)
-    objects.push(mesh)
     resetUniform()
 }
 function createStats()
@@ -252,17 +258,17 @@ function updateOffset(direction)
     offset.x -= direction.x * relZoom * 0.002
     offset.y += direction.y * relZoom * 0.002
 
-    mesh.material.uniforms.Offset.value = offset
+    updateUniform('Offset', offset)
 }
 function updatePalette(newIndex = 0)
 {
     currentPalette = newIndex % palettes.length
-    mesh.material.uniforms.Palette.value = palettes[currentPalette]
+    updateUniform('Palette', palettes[currentPalette])
 }
 function updatePaletteReverse()
 {
     reversePalette = !reversePalette
-    mesh.material.uniforms.ReversePalette.value = reversePalette
+    updateUniform('ReversePalette', reversePalette)
 }
 
 
