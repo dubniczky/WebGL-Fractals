@@ -17,7 +17,6 @@ var material = null
 var mesh = null
 var objects = []
 var palettes = []
-var shaders = []
 var currentPalette = 0
 var reversePalette = false
 var stats = null
