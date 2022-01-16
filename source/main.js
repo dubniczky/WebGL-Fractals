@@ -214,7 +214,7 @@ function resetUniform()
 }
 function cycleShader(delta)
 {
-    applyShader(shaderId + delta % shaders.length)
+    applyShader((shaderId + delta) % fragments.length)
 }
 function applyShader(shaderIndex)
 {
