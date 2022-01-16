@@ -40,8 +40,8 @@ module.exports = {
             },
             // GLSL Fragments
             {
-                test: /\.(frag|vert)$/,
-                use: 'file-loader'
+                test: /\.(frag|vert)$/i,
+                type: 'asset/source'
             }
         ],
     },
