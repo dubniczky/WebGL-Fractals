@@ -1,5 +1,3 @@
-const path = require('path')
-
 const CopyPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin").default
@@ -7,7 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin").default
 module.exports = {
     entry: {
         'bundle': [
-            path.resolve(__dirname, './source/main.js')
+            './source/main.js'
         ]
     },
     devtool: 'source-map',
