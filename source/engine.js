@@ -72,6 +72,7 @@ export async function setup(canvasElement) {
 	camera.position.z = 1
     console.log('Scene loaded.')
     
+    // Setup uniform
     setupDefaults()
     uniforms = {
         Resolution:     { type: 'vec2',  value: new Three.Vector2(window.innerWidth, window.innerHeight) },
@@ -218,6 +219,9 @@ function cycleShader(delta) {
     applyShader((shaderId + delta) % fragments.length)
 }
 function applyShader(shaderIndex) {
+    console.log('Compiling shader...', [shaderIndex, fragments[shaderId].name])
+    const perfStart = performance.now()
+
     shaderId = shaderIndex
 
     //Create shader material
@@ -240,6 +244,10 @@ function applyShader(shaderIndex) {
     //Apply shader
     mesh = new Three.Mesh(geometry, material)
     scene.add(mesh)
+
+    const perfEnd = performance.now()
+    console.log('Shader compiled in', (perfEnd-perfStart).toFixed(3), 'ms')
+
     resetUniform()
 }
 function createStats() {
