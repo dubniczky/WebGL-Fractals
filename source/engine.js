@@ -220,11 +220,10 @@ function cycleShader(delta) {
     applyShader( next % fragments.length )
 }
 function applyShader(shaderIndex) {
-    console.log('Compiling shader...', [shaderIndex, fragments[shaderId].name])
+    console.log('Compiling shader...', [shaderIndex, fragments[shaderIndex].name])
     const perfStart = performance.now()
 
     shaderId = shaderIndex
-    console.log(shaderIndex)
 
     //Create shader material
     material =  new Three.ShaderMaterial({
