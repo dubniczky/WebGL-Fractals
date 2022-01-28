@@ -213,13 +213,18 @@ function resetUniform() {
     zoom.linear = 1
 }
 function cycleShader(delta) {
-    applyShader((shaderId + delta) % fragments.length)
+    let next = (shaderId + delta)
+    if (next < 0) {
+        next = fragments.length - 1
+    }
+    applyShader( next % fragments.length )
 }
 function applyShader(shaderIndex) {
     console.log('Compiling shader...', [shaderIndex, fragments[shaderId].name])
     const perfStart = performance.now()
 
     shaderId = shaderIndex
+    console.log(shaderIndex)
 
     //Create shader material
     material =  new Three.ShaderMaterial({
