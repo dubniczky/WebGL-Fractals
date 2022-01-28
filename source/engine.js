@@ -25,6 +25,7 @@ let stats = null
 let uniforms = null
 let shaderId = 0
 let shaderTime = null
+let offset = null
 let palette = {
     textures: null,
     current: 0,
@@ -35,9 +36,10 @@ let zoom = {
     linear: 1.,
     exponential: 1.
 }
-let mousePos = new Three.Vector2(0, 0)
-let mouseDown = false
-let offset = null
+let mouse = {
+    pos: new Three.Vector2(0, 0),
+    down: false
+}
 
 
 export async function setup(canvasElement) {
@@ -78,7 +80,7 @@ export async function setup(canvasElement) {
         Time:           { type: 'float', value: 0 },
         Palette:        { type: 't',     value: palette.textures[0] },
         ReversePalette: { type: 'bool',  value: palette.reverse },
-        MousePosition:  { type: 'vec2',  value: new Three.Vector2(0, 0) },
+        MousePosition:  { type: 'vec2',  value: mouse.pos },
         MouseLeftDown:  { type: 'bool',  value: false },
         MouseRightDown: { type: 'bool',  value: false },
     }
@@ -165,14 +167,14 @@ function onMouseScroll(e) {
 function onMouseMove(e) {
     var pos = new Three.Vector2(e.x, e.y)
 
-    if (mouseDown)
+    if (mouse.down)
     {
         var dir = new Three.Vector2(e.x, e.y)
-        dir.sub(mousePos)
+        dir.sub(mouse.pos)
         updateOffset(dir)
     }
 
-    mousePos = pos
+    mouse.pos = pos
 
     let rect = canvas.getBoundingClientRect();
     let x = e.x / rect.width
@@ -181,10 +183,10 @@ function onMouseMove(e) {
     updateUniform('MousePosition', new Three.Vector2(x, 1 - y))
 }
 function onMouseDown(e) {
-    mouseDown = true
+    mouse.down = true
 }
 function onMouseUp(e) {
-    mouseDown = false
+    mouse.down = false
 }
 function onKeyDown(e) {
     switch (e.code)
