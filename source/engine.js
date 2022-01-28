@@ -186,8 +186,7 @@ function onMouseUp(e) {
     mouse.down = false
 }
 function onKeyDown(e) {
-    switch (e.code)
-    {
+    switch (e.code) {
         case "KeyP":
             updatePalette(palette.current + 1)
             break
@@ -223,16 +222,14 @@ function applyShader(shaderIndex) {
     shaderId = shaderIndex
 
     //Create shader material
-    material =  new Three.ShaderMaterial(
-    {
+    material =  new Three.ShaderMaterial({
         uniforms: uniforms,
         fragmentShader: fragments[shaderId].source,
         vertexShader: vertex,
     })    
 
     //Remove previous shader
-    if (mesh != null)
-    {
+    if (mesh != null) {
         scene.remove(mesh)
         mesh.geometry.dispose()
         mesh.material.dispose()
