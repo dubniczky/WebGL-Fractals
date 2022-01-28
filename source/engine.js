@@ -90,7 +90,7 @@ export async function setup(canvasElement) {
     geometry = new Three.PlaneBufferGeometry(2, 2)
     applyShader(defaultShaderIndex)
 
-    //Setup renderer
+    // Setup renderer
 	renderer = new Three.WebGLRenderer({
         antialias: false,
         canvas: canvas,
@@ -101,7 +101,7 @@ export async function setup(canvasElement) {
 	renderer.setAnimationLoop( render )
     console.log('Renderer loaded.')
 
-    //Setup events
+    // Setup events
     window.addEventListener('resize', (e) => onWindowResized(e))
     canvas.addEventListener('mousewheel', (e) => onMouseScroll(e))
     canvas.addEventListener('mousemove', (e) => onMouseMove(e))
@@ -110,7 +110,9 @@ export async function setup(canvasElement) {
     window.addEventListener('keydown', (e) => onKeyDown(e))
     console.log('Events loaded.')
 
-    stats = createStats()
+    // Create stats panel
+    stats = new Stats()
+    stats.setMode(0)
     document.body.appendChild( stats.domElement )
     console.log('Stats loaded.')
 }
@@ -249,16 +251,6 @@ function applyShader(shaderIndex) {
     console.log('Shader compiled in', (perfEnd-perfStart).toFixed(3), 'ms')
 
     resetUniform()
-}
-function createStats() {
-    var stats = new Stats();
-    stats.setMode(0);
-
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.left = '0';
-    stats.domElement.style.top = '0';
-
-    return stats;
 }
 function updateOffset(direction) {
     offset.x -= direction.x * zoom.exponential * 0.002
