@@ -4,7 +4,7 @@ import discretebodies from './shaders/discretebodies.frag'
 import mellowbodies from './shaders/mellowbodies.frag'
 import noise from './shaders/noise.frag'
 import rainbowflower from './shaders/rainbowflower.frag'
-import shapes from './shaders/shapes.frag'
+import circleapprox from './shaders/circleapprox.frag'
 import smears from './shaders/smears.frag'
 import truchet from './shaders/truchet.frag'
 import wave from './shaders/wave.frag'
@@ -20,7 +20,7 @@ export default {
         { name: 'mellowbodies', source: mellowbodies.sourceCode },
         { name: 'noise', source: noise.sourceCode },
         { name: 'rainbowflower', source: rainbowflower.sourceCode },
-        { name: 'shapes', source: shapes.sourceCode },
+        { name: 'circleapprox', source: circleapprox.sourceCode },
         { name: 'smears', source: smears.sourceCode },
         { name: 'truchet', source: truchet.sourceCode },
         { name: 'wave', source: wave.sourceCode },
