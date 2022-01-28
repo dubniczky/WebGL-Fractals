@@ -73,7 +73,7 @@ export async function setup(canvasElement) {
     console.log('Scene loaded.')
     
     // Setup uniform
-    setupDefaults()
+    overrideDefaultUniform()
     uniforms = {
         Resolution:     { type: 'vec2',  value: new Three.Vector2(window.innerWidth, window.innerHeight) },
         Offset:         { type: 'vec2',  value: offset },
@@ -120,18 +120,10 @@ export async function setup(canvasElement) {
     renderer.setAnimationLoop( render )
 }
 
-function setupDefaults() {
-    //edge
-    //relZoom = 0.0021746731908035134
-    //offset = new Three.Vector2(-0.8465005331231863, 0.20450787381815994)
-
-    //flower
+function overrideDefaultUniform() {
+    // Mandelbrot flower location
     zoom.exponential = 0.009554277742566964
     offset = new Three.Vector2(-0.37432304500407854, 0.6598041393699959)
-
-    //relZoom = 0.0007435497
-    //offset = new Three.Vector2(-0.7435669, 0.1314023)
-    
 }
 
 
