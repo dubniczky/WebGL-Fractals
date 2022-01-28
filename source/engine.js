@@ -23,8 +23,10 @@ let stats = null
 let uniforms = null
 let shaderId = 0
 let shaderTime = null
-let linZoom = 1
-let relZoom = 1
+let zoom = {
+    linear: 1.,
+    exponential: 1.
+}
 let mousePos = new Three.Vector2(0, 0)
 let mouseDown = false
 let offset = null
@@ -62,7 +64,7 @@ export default async function setup()
     {
         Resolution:     { type: 'vec2',  value: new Three.Vector2(window.innerWidth, window.innerHeight) },
         Offset:         { type: 'vec2',  value: offset },
-        Zoom:           { type: 'vec2',  value: new Three.Vector2(linZoom, relZoom) },
+        Zoom:           { type: 'vec2',  value: new Three.Vector2(zoom.linear, zoom.exponential) },
         Time:           { type: 'float', value: 0 },
         Palette:        { type: 't',     value: palettes[0] },
         ReversePalette: { type: 'bool',  value: reversePalette },
@@ -108,7 +110,7 @@ function setupDefaults()
     //offset = new Three.Vector2(-0.8465005331231863, 0.20450787381815994)
 
     //flower
-    relZoom = 0.009554277742566964
+    zoom.exponential = 0.009554277742566964
     offset = new Three.Vector2(-0.37432304500407854, 0.6598041393699959)
 
     //relZoom = 0.0007435497
@@ -144,16 +146,16 @@ function onMouseScroll(e)
     var delta = e.deltaY
     if (delta < 0)
     {
-        relZoom *= 0.8
-        linZoom -= .25
+        zoom.exponential *= 0.8
+        zoom.linear -= .25
     }
     else
     {
-        relZoom *= 1.2
-        linZoom += .25
+        zoom.exponential *= 1.2
+        zoom.linear += .25
     }
     
-    updateUniform('Zoom', new Three.Vector2(linZoom, relZoom))
+    updateUniform('Zoom', new Three.Vector2(zoom.linear, zoom.exponential))
 }
 function onMouseMove(e)
 {
@@ -253,8 +255,8 @@ function createStats()
 }
 function updateOffset(direction)
 {
-    offset.x -= direction.x * relZoom * 0.002
-    offset.y += direction.y * relZoom * 0.002
+    offset.x -= direction.x * zoom.exponential * 0.002
+    offset.y += direction.y * zoom.exponential * 0.002
 
     updateUniform('Offset', offset)
 }
