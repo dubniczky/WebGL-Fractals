@@ -158,11 +158,11 @@ function onMouseScroll(e) {
         zoom.exponential *= exponentialZoomRate
         zoom.linear += linearZoomRate
     }
-    
+
     updateUniform('Zoom', new Three.Vector2(zoom.linear, zoom.exponential))
 }
 function onMouseMove(e) {
-    var pos = new Three.Vector2(e.x, e.y)
+    let pos = new Three.Vector2(e.x, e.y)
 
     if (mouse.down)
     {
@@ -247,8 +247,8 @@ function applyShader(shaderIndex) {
     resetUniform()
 }
 function updateOffset(direction) {
-    offset.x -= direction.x * zoom.exponential * 0.002
-    offset.y += direction.y * zoom.exponential * 0.002
+    offset.x -= (direction.x / canvas.width) * zoom.exponential
+    offset.y += (direction.y / canvas.height) * zoom.exponential
 
     updateUniform('Offset', offset)
 }
