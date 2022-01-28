@@ -173,7 +173,7 @@ function onMouseMove(e) {
 
     mouse.pos = pos
 
-    let rect = canvas.getBoundingClientRect();
+    let rect = canvas.getBoundingClientRect()
     let x = e.x / rect.width
     let y = e.y / rect.height
         
@@ -190,16 +190,16 @@ function onKeyDown(e) {
     {
         case "KeyP":
             updatePalette(palette.current + 1)
-            break;
+            break
         case "KeyR":
             updatePaletteReverse()
-            break;
+            break
         case "ArrowRight":
             cycleShader(+1)
-            break;
+            break
             case "ArrowLeft":
             cycleShader(-1)
-            break;
+            break
     }
 }
 
