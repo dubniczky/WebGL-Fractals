@@ -137,8 +137,8 @@ function render(time) {
 
 //Events
 function onWindowResized(e) {
-    canvas.width = canvas.clientWidth
-    canvas.height = canvas.clientHeight
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
 
     renderer.setSize( canvas.width, canvas.height, false )
     camera.aspect = canvas.width / canvas.height
