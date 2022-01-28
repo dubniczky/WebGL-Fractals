@@ -32,8 +32,7 @@ let mouseDown = false
 let offset = null
 
 
-export default async function setup()
-{
+export default async function setup() {
     //Load DOM objects
     canvas = document.getElementById('main-canvas')
     console.log('DOM loaded.')
@@ -60,8 +59,7 @@ export default async function setup()
     console.log('Scene loaded.')
     
     setupDefaults()
-    uniforms =
-    {
+    uniforms = {
         Resolution:     { type: 'vec2',  value: new Three.Vector2(window.innerWidth, window.innerHeight) },
         Offset:         { type: 'vec2',  value: offset },
         Zoom:           { type: 'vec2',  value: new Three.Vector2(zoom.linear, zoom.exponential) },
@@ -78,8 +76,7 @@ export default async function setup()
     applyShader(defaultShaderIndex)
 
     //Setup renderer
-	renderer = new Three.WebGLRenderer(
-    {
+	renderer = new Three.WebGLRenderer({
         antialias: false,
         canvas: canvas,
         powerPerformance: 'high-performance',
@@ -103,8 +100,7 @@ export default async function setup()
     console.log('Stats loaded.')
 }
 
-function setupDefaults()
-{
+function setupDefaults() {
     //edge
     //relZoom = 0.0021746731908035134
     //offset = new Three.Vector2(-0.8465005331231863, 0.20450787381815994)
@@ -120,8 +116,7 @@ function setupDefaults()
 
 
 //Render loop
-function render(time)
-{
+function render(time) {
     updateUniform('Time', (Date.now() - shaderTime) / 1000.0)
 	renderer.render( scene, camera )
     stats.update()
@@ -129,8 +124,7 @@ function render(time)
 
 
 //Events
-function onWindowResized(e)
-{
+function onWindowResized(e) {
     canvas.width = canvas.clientWidth
     canvas.height = canvas.clientHeight
 
@@ -140,8 +134,7 @@ function onWindowResized(e)
 
     updateUniform('Resolution', new Three.Vector2(canvas.width, canvas.height))
 }
-function onMouseScroll(e)
-{
+function onMouseScroll(e) {
     //Normalize
     var delta = e.deltaY
     if (delta < 0)
@@ -157,8 +150,7 @@ function onMouseScroll(e)
     
     updateUniform('Zoom', new Three.Vector2(zoom.linear, zoom.exponential))
 }
-function onMouseMove(e)
-{
+function onMouseMove(e) {
     var pos = new Three.Vector2(e.x, e.y)
 
     if (mouseDown)
@@ -176,16 +168,13 @@ function onMouseMove(e)
         
     updateUniform('MousePosition', new Three.Vector2(x, 1 - y))
 }
-function onMouseDown(e)
-{
+function onMouseDown(e) {
     mouseDown = true
 }
-function onMouseUp(e)
-{
+function onMouseUp(e) {
     mouseDown = false
 }
-function onKeyDown(e)
-{
+function onKeyDown(e) {
     switch (e.code)
     {
         case "KeyP":
@@ -208,16 +197,13 @@ function onKeyDown(e)
 function updateUniform(name, value) {
     mesh.material.uniforms[name].value = value
 }
-function resetUniform()
-{
+function resetUniform() {
     shaderTime = Date.now()
 }
-function cycleShader(delta)
-{
+function cycleShader(delta) {
     applyShader((shaderId + delta) % fragments.length)
 }
-function applyShader(shaderIndex)
-{
+function applyShader(shaderIndex) {
     shaderId = shaderIndex
 
     //Create shader material
@@ -242,8 +228,7 @@ function applyShader(shaderIndex)
     scene.add(mesh)
     resetUniform()
 }
-function createStats()
-{
+function createStats() {
     var stats = new Stats();
     stats.setMode(0);
 
@@ -253,20 +238,17 @@ function createStats()
 
     return stats;
 }
-function updateOffset(direction)
-{
+function updateOffset(direction) {
     offset.x -= direction.x * zoom.exponential * 0.002
     offset.y += direction.y * zoom.exponential * 0.002
 
     updateUniform('Offset', offset)
 }
-function updatePalette(newIndex = 0)
-{
+function updatePalette(newIndex = 0) {
     currentPalette = newIndex % palettes.length
     updateUniform('Palette', palettes[currentPalette])
 }
-function updatePaletteReverse()
-{
+function updatePaletteReverse() {
     reversePalette = !reversePalette
     updateUniform('ReversePalette', reversePalette)
 }
