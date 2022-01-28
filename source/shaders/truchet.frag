@@ -1,24 +1,4 @@
-// Author @patriciogv - 2015
-// Title: Truchet - 10 print
-
-#ifdef GL_ES
-precision mediump float;
-#endif
-
-uniform vec3 emptyColor; 
-uniform sampler2D palette;
-uniform int paletteDirection;
-
-uniform vec2 size;
-uniform vec2 offset;
-uniform float linZoom;
-uniform float relZoom;
-uniform float time;
-uniform bool reversePalette;
-uniform vec2 MousePosition;
-
-in vec3 pos;
-
+@include "./uniform.frag"
 
 #define PI 3.14159265358979323846
 
@@ -53,9 +33,9 @@ void main()
     const int steps = 10;
 
     //coord
-    vec2 coord = gl_FragCoord.xy / size.xy;
+    vec2 coord = gl_FragCoord.xy / Resolution.xy;
     vec2 pcoord = coord * 20.0;
-    pcoord.x += time * 1.0;
+    pcoord.x += Time * 1.0;
     //pcoord *= 2. + sin(time);
 
     //Layers
