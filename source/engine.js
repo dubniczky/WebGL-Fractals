@@ -210,6 +210,8 @@ function updateUniform(name, value) {
 }
 function resetUniform() {
     shaderTime = Date.now()
+    zoom.exponential = 1
+    zoom.linear = 1
 }
 function cycleShader(delta) {
     applyShader((shaderId + delta) % fragments.length)
