@@ -4,7 +4,6 @@ import discretebodies from './shaders/discretebodies.frag'
 import mellowbodies from './shaders/mellowbodies.frag'
 import noise from './shaders/noise.frag'
 import rainbowflower from './shaders/rainbowflower.frag'
-import random from './shaders/random.frag'
 import raymarch from './shaders/raymarch.frag'
 import shapes from './shaders/shapes.frag'
 import smears from './shaders/smears.frag'
@@ -22,7 +21,6 @@ export default {
         { name: 'mellowbodies', source: mellowbodies.sourceCode },
         { name: 'noise', source: noise.sourceCode },
         { name: 'rainbowflower', source: rainbowflower.sourceCode },
-        { name: 'random', source: random.sourceCode },
         { name: 'raymarch', source: raymarch.sourceCode },
         { name: 'shapes', source: shapes.sourceCode },
         { name: 'smears', source: smears.sourceCode },
