@@ -5,6 +5,11 @@ import shaders from './shaders'
 
 //Constants
 const defaultShaderIndex = 0
+const paletteTextureFiles = [
+    './palettes/magma-palette.png',
+    './palettes/magenteal-palette.png',
+    './palettes/rainbow-palette.png'
+]
 
 //Engine
 let fragments = null
@@ -16,13 +21,16 @@ let renderer = null
 let geometry = null
 let material = null
 let mesh = null
-let palettes = null
-let currentPalette = null
-let reversePalette = null
 let stats = null
 let uniforms = null
 let shaderId = 0
 let shaderTime = null
+let palette = {
+    textures: null,
+    current: 0,
+    reverse: false,
+    count: 0
+}
 let zoom = {
     linear: 1.,
     exponential: 1.
@@ -33,6 +41,7 @@ let offset = null
 
 
 export async function setup(canvasElement) {
+    // Attach or create canvas
     canvas = canvasElement
     if (canvas == null) {
         canvas = document.createElement('canvas')
@@ -40,21 +49,21 @@ export async function setup(canvasElement) {
     }
     console.log('DOM loaded.')
 
-    //Load shaders
+    // Load shaders
     fragments = shaders.fragment
     vertex = shaders.vertex
+    console.log('Shaders loaded.')
    
-    //Load textures
+    // Load textures
     const textureLoader = new Three.TextureLoader()
-    palettes = []
-    palettes.push(textureLoader.load('./palettes/magma-palette.png'))
-    palettes.push(textureLoader.load('./palettes/magenteal-palette.png'))
-    palettes.push(textureLoader.load('./palettes/rainbow-palette.png'))
-    currentPalette = 0
-    reversePalette = false
+    palette.textures = []
+    for (const url of paletteTextureFiles) {
+        palette.textures.push( textureLoader.load(url) )
+    }
+    palette.count = palette.textures.length
     console.log('Textures loaded.')
 
-    //Setup scene
+    // Setup scene
     scene = new Three.Scene()
     scene.autoUpdate = false
 	camera = new Three.OrthographicCamera( -1, 1, 1, -1, 0, 1 )
@@ -67,8 +76,8 @@ export async function setup(canvasElement) {
         Offset:         { type: 'vec2',  value: offset },
         Zoom:           { type: 'vec2',  value: new Three.Vector2(zoom.linear, zoom.exponential) },
         Time:           { type: 'float', value: 0 },
-        Palette:        { type: 't',     value: palettes[0] },
-        ReversePalette: { type: 'bool',  value: reversePalette },
+        Palette:        { type: 't',     value: palette.textures[0] },
+        ReversePalette: { type: 'bool',  value: palette.reverse },
         MousePosition:  { type: 'vec2',  value: new Three.Vector2(0, 0) },
         MouseLeftDown:  { type: 'bool',  value: false },
         MouseRightDown: { type: 'bool',  value: false },
@@ -181,7 +190,7 @@ function onKeyDown(e) {
     switch (e.code)
     {
         case "KeyP":
-            updatePalette(currentPalette + 1)
+            updatePalette(palette.current + 1)
             break;
         case "KeyR":
             updatePaletteReverse()
@@ -248,10 +257,10 @@ function updateOffset(direction) {
     updateUniform('Offset', offset)
 }
 function updatePalette(newIndex = 0) {
-    currentPalette = newIndex % palettes.length
-    updateUniform('Palette', palettes[currentPalette])
+    palette.current = newIndex % palettes.count
+    updateUniform('Palette', palettes.textures[palette.current])
 }
 function updatePaletteReverse() {
-    reversePalette = !reversePalette
-    updateUniform('ReversePalette', reversePalette)
+    palette.reverse = !palette.reverse
+    updateUniform('ReversePalette', palette.reverse)
 }
