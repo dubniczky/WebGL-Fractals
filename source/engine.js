@@ -5,6 +5,8 @@ import shaders from './shaders'
 
 //Constants
 const defaultShaderIndex = 0
+const linearZoomRate = .25
+const exponentialZoomRate = 1.2
 const paletteTextureFiles = [
     './palettes/magma-palette.png',
     './palettes/magenteal-palette.png',
@@ -148,16 +150,13 @@ function onWindowResized(e) {
 }
 function onMouseScroll(e) {
     //Normalize
-    var delta = e.deltaY
-    if (delta < 0)
-    {
-        zoom.exponential *= 0.8
-        zoom.linear -= .25
+    if (e.deltaY < 0) { // Zoom out
+        zoom.exponential /= exponentialZoomRate
+        zoom.linear -= linearZoomRate
     }
-    else
-    {
-        zoom.exponential *= 1.2
-        zoom.linear += .25
+    else { // Zoom in
+        zoom.exponential *= exponentialZoomRate
+        zoom.linear += linearZoomRate
     }
     
     updateUniform('Zoom', new Three.Vector2(zoom.linear, zoom.exponential))
