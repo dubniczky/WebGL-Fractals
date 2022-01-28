@@ -1,13 +1,4 @@
-uniform vec3 emptyColor; 
-uniform sampler2D palette;
-uniform int paletteDirection;
-
-uniform vec2 size;
-uniform vec2 offset;
-uniform float linZoom;
-uniform float relZoom;
-uniform float time;
-uniform bool reversePalette;
+@include "./uniform.frag"
 
 #ifdef GL_ES
 precision mediump float;
@@ -21,10 +12,9 @@ precision mediump float;
 
 void main()
 {
-    vec2 st = gl_FragCoord.xy/size.xy;
-    st.x *= size.x/size.y;
+    vec2 st = gl_FragCoord.xy/Resolution.xy;
+    st.x *= Resolution.x/Resolution.y;
     vec3 color = vec3(0.0);
-    float d = 0.0;
 
     // Remap the space to -1. to 1.
     st = st *2.-1.;
@@ -35,10 +25,10 @@ void main()
     // Angle and radius from the current pixel
     float a = atan(st.x,st.y)+PI;
     //float r = TWO_PI/float(N);
-    float r = TWO_PI / time;
+    float r = TWO_PI / Time;
 
     // Shaping function that modulate the distance
-    d = cos(floor(.5+a/r)*r-a)*length(st);
+    float d = cos(floor(.5+a/r)*r-a)*length(st);
 
     color = vec3(1.0-smoothstep(.4,.41,d));
     // color = vec3(d);
