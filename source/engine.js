@@ -98,7 +98,6 @@ export async function setup(canvasElement) {
         depth: false
     })
 	renderer.setSize( window.innerWidth, window.innerHeight, false )
-	renderer.setAnimationLoop( render )
     console.log('Renderer loaded.')
 
     // Setup events
@@ -115,6 +114,10 @@ export async function setup(canvasElement) {
     stats.setMode(0)
     document.body.appendChild( stats.domElement )
     console.log('Stats loaded.')
+
+    // Setup Complete
+    console.log('✅ Engine setup complete, setarting renderer...')
+    renderer.setAnimationLoop( render )
 }
 
 function setupDefaults() {
