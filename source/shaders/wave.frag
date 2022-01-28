@@ -1,15 +1,6 @@
-uniform vec3 emptyColor; 
-uniform sampler2D palette;
-uniform int paletteDirection;
+@include "./uniform.frag"
 
-uniform vec2 size;
-uniform vec2 offset;
-uniform float linZoom;
-uniform float relZoom;
-uniform float time;
-uniform bool reversePalette;
-
-in vec3 pos;
+#define LINE_THRESHOLD 0.005
 
 //Sin wave
 float modulation1(float x, float time)
@@ -56,30 +47,29 @@ float random(vec2 point, float time)
 
 void main()
 {
-    const float treshold = 0.005;
+    // Get position
+    vec2 pos = gl_FragCoord.xy;
+    // Warp to normalize screen space
+    pos = pos / vec2(Resolution.x, Resolution.y);
+    // Transform sin range to position set
+    pos = (pos - .5) * 2.;
 
-    vec2 pos = pos.xy;
+    float s1 = modulation1(pos.x, Time);
+    //float s = modulation2(pos.x, Time);
+    //float s = modulation3(pos.x, Time);
+    float s2 = modulation4(pos.x, Time);
+    //float s = modulation5(pos.x, Time);
 
-    //float s = modulation1(pos.x, time);
-    //float s = modulation2(pos.x, time);
-    //float s = modulation3(pos.x, time);
-    //float s = modulation4(pos.x, time);
-    //float s = modulation5(pos.x, time);
-
-    /*
-    vec3 color;
-    if (abs(s - pos.y) < treshold)
+    
+    vec3 color = vec3(0.);
+    if (abs(s1 - pos.y) < LINE_THRESHOLD)
+    {
+        color = vec3(.25);
+    }
+    if (abs(s2 - pos.y) < LINE_THRESHOLD)
     {
         color = vec3(1.);
     }
-    else
-    {
-        color = vec3(0.);
-    }*/
-
-    float x = random(pos, time);
-
-    vec3 color = vec3(x);
 
     gl_FragColor = vec4(color, 1.);
 }
