@@ -255,8 +255,8 @@ function updateOffset(direction) {
     updateUniform('Offset', offset)
 }
 function updatePalette(newIndex = 0) {
-    palette.current = newIndex % palettes.count
-    updateUniform('Palette', palettes.textures[palette.current])
+    palette.current = newIndex % palette.count
+    updateUniform('Palette', palette.textures[palette.current])
 }
 function updatePaletteReverse() {
     palette.reverse = !palette.reverse
