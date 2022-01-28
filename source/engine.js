@@ -32,9 +32,12 @@ let mouseDown = false
 let offset = null
 
 
-export default async function setup() {
-    //Load DOM objects
-    canvas = document.getElementById('main-canvas')
+export async function setup(canvasElement) {
+    canvas = canvasElement
+    if (canvas == null) {
+        canvas = document.createElement('canvas')
+        document.appendChild(canvas)
+    }
     console.log('DOM loaded.')
 
     //Load shaders

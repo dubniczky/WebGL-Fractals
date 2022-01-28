@@ -1,3 +1,7 @@
-import engine from './engine'
+import * as engine from './engine'
 
-engine.setup()
+// Load DOM
+const canvas = document.getElementById('main-canvas')
+
+// Setup Engine
+engine.setup(canvas)
