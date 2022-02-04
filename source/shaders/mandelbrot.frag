@@ -7,7 +7,8 @@ void main()
 
     //Coords
     vec2 off = Offset.xy;
-    vec2 pos = gl_FragCoord.xy / Resolution.xy - vec2(.5);
+    vec2 pos = (gl_FragCoord.xy / Resolution.xy - vec2(.5));
+    pos.x /= (Resolution.y / Resolution.x);
     float x0 = off.x + (pos.x) * Zoom.y;
     float y0 = off.y + (pos.y) * Zoom.y;
 
