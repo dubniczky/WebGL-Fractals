@@ -9,7 +9,7 @@
         "serve": "npx http-server ./dist/ -d --cors -o / -c-1"
     },
     "author": "Richard Antal Nagy",
-    "license": "ISC",
+    "license": "MIT",
     "devDependencies": {
         "copy-webpack-plugin": "^10.2.0",
         "css-loader": "^6.5.1",
