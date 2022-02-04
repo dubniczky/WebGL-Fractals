@@ -75,7 +75,6 @@ export async function setup(canvasElement) {
     console.log('Scene loaded.')
     
     // Setup uniform
-    overrideDefaultUniform()
     uniforms = {
         Resolution:     { type: 'vec2',  value: new Three.Vector2(window.innerWidth, window.innerHeight) },
         Offset:         { type: 'vec2',  value: offset },
@@ -91,6 +90,7 @@ export async function setup(canvasElement) {
 
     geometry = new Three.PlaneBufferGeometry(2, 2)
     applyShader(defaultShaderIndex)
+    overrideDefaultUniform()
 
     // Setup renderer
 	renderer = new Three.WebGLRenderer({
@@ -124,8 +124,8 @@ export async function setup(canvasElement) {
 
 function overrideDefaultUniform() {
     // Mandelbrot flower location
-    zoom.exponential = 0.009554277742566964
-    offset = new Three.Vector2(-0.37432304500407854, 0.6598041393699959)
+    updateUniform('Zoom', new Three.Vector2(zoom.linear, zoom.exponential = 0.009554277742566964))
+    updateUniform('Offset', offset = new Three.Vector2(-0.37432304500407854, 0.6598041393699959))
 }
 
 
@@ -149,6 +149,7 @@ function onWindowResized(e) {
     updateUniform('Resolution', new Three.Vector2(canvas.width, canvas.height))
 }
 function onMouseScroll(e) {
+    console.log(zoom.exponential)
     //Normalize
     if (e.deltaY < 0) { // Zoom out
         zoom.exponential /= exponentialZoomRate
