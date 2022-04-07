@@ -1,0 +1,19 @@
+image: node:14
+
+stages:
+  - deploy
+
+pages:
+  stage: deploy
+  only:
+    - main
+  artifacts:
+    paths:
+      - public
+  script:
+    # Install dependencies
+    - yarn install
+    # Build page
+    - yarn build
+    # Move dist to public (required by gitlab pages)
+    - mv ./dist ./public
