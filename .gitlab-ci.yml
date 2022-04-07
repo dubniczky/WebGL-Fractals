@@ -6,7 +6,7 @@ stages:
 pages:
   stage: deploy
   only:
-    - main
+    - master
   artifacts:
     paths:
       - public
