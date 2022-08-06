@@ -14,20 +14,32 @@ https://richardnagy.gitlab.io/webprojects/webgl-fractals/
 
 ## Usage
 
-1. Download repository
+### 1. Download repository
 
 ```bash
-https://gitlab.com/richardnagy/webprojects/webgl-fractals
-cd webgl-fractals
+https://github.com/dubniczky/WebGL-Fractals
+cd WebGL-Fractals
 ```
 
-2. Install dependencies
+### 2. Install dependencies
+
+```bash
+make install
+```
+
+or
 
 ```bash
 yarn install
 ```
 
-3. Build with webpack
+### 3. Build with webpack
+
+```bash
+make build
+```
+
+or
 
 ```bash
 yarn build
